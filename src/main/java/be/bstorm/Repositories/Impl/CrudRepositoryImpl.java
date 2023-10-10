@@ -132,4 +132,62 @@ public class CrudRepositoryImpl implements CrudRepository {
             throw new RuntimeException("erreur de connexion",e);
         }
     }
+
+    @Override
+    public int[] createBatch(List<Utilisateur> utilisateurs) {
+        String query = "INSERT INTO utilisateur (nom, email) VALUES (?,?)";
+        int[] rowAffected;
+
+        try(
+            Connection connection = ConnectionFactory.CreateConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(query)
+        ){
+
+            for(Utilisateur u : utilisateurs){
+
+                preparedStatement.setString(1, u.getNom());
+                preparedStatement.setString(2, u.getMail());
+                preparedStatement.addBatch();
+            }
+
+            rowAffected = preparedStatement.executeBatch();
+
+
+        }catch (SQLException e){
+        throw new RuntimeException("erreur de connexion",e);
+        }
+
+        return rowAffected;
+    }
+
+    @Override
+    public Utilisateur getByMail(String mail) {
+        String query = "SELECT * FROM utilisateur WHERE email = ?";
+
+        Utilisateur utilisateur = null;
+
+        try(
+                Connection connection = ConnectionFactory.CreateConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)
+            ){
+
+            preparedStatement.setString(1, mail);
+
+            try(ResultSet rs = preparedStatement.executeQuery();){
+
+                while(rs.next()){
+                    int id = rs.getInt("id");
+                    String nom = rs.getString("nom");
+
+                    utilisateur = new Utilisateur(id,nom,mail);
+                }
+            }
+        }catch (SQLException e){
+            throw new RuntimeException("erreur de connexion",e);
+        }
+
+        return utilisateur;
+    }
+
+
 }

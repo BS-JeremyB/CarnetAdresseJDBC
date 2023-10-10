@@ -11,6 +11,11 @@ public interface CrudRepository {
     void create(Utilisateur utilisateur);
     Utilisateur update(int id, String nom, String email);
     void delete(int id);
+    int[] createBatch(List<Utilisateur> utilisateurs);
+    Utilisateur getByMail(String mail);
+
+
+
 
 
 }

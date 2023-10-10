@@ -5,6 +5,7 @@ import be.bstorm.Repositories.Impl.CrudRepositoryImpl;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,6 +26,8 @@ public class Main {
                     "3. Supprimer un contact\n" +
                     "4. Parcourir les contacts \n" +
                     "5. Afficher un contact \n" +
+                    "6. Ajouter un lot de contacts \n" +
+                    "7. Afficher un contact via son email \n" +
                     "0. Quitter");
 
             choix = sc.nextLine();
@@ -63,6 +66,28 @@ public class Main {
                     id = sc.nextInt();
                     sc.nextLine();
                     Utilisateur utilisateur = connCrud.getById(id);
+                    System.out.println(utilisateur.toString());
+                    break;
+                case "6" :
+                    List<Utilisateur> lotUtilisateur = new ArrayList<>();
+                    for(int i = 0; i < 3; i++){
+                        System.out.println("Veuillez entrer le nom du contact N°"+(i+1));
+                        nom = sc.nextLine();
+                        System.out.println("Veuillez entrer le email du contact N°"+(i+1));
+                        email= sc.nextLine();
+
+                        lotUtilisateur.add(new Utilisateur(nom,email));
+                    }
+
+                    int[] rowAffected = connCrud.createBatch(lotUtilisateur);
+
+                    System.out.println(Arrays.toString(rowAffected));
+
+                    break;
+                case "7" :
+                    System.out.println("Veuillez entrer l'email du contact à trouver");
+                    email = sc.nextLine();
+                    utilisateur = connCrud.getByMail(email);
                     System.out.println(utilisateur.toString());
                     break;
                 case "0" :
